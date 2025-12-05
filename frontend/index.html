@@ -1,11 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mandarin-Taking-Notes-API</title>
 </head>
+
 <body>
-    
+    <h1>Mandarin Notes Taking App</h1>
+    <b></b>
+    <b></b>
+    <input id="pinyin" placeholder="Pinyin">
+    <input id="hanzi" placeholder="汉字">
+    <input id="english" placeholder="English meaning">
+    <input id="malay" placeholder="Malay meaning">
+    <b></b>
+    <button onclick="saveNote()">Save Note</button>
+
+    <script>
+        async function saveNote() {
+            const note = {
+                pinyin: document.getElementById("pinyin").value,
+                hanzi: document.getElementById("hanzi").value,
+                english: document.getElementById("english").value,
+                malay: document.getElementById("malay").value
+            };
+
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            try {
+                const res = await fetch("http://127.0.0.1:8000/add-note", {
+                    method: "POST",
+                    headers: myHeaders,
+                    body: JSON.stringify(note)
+                });
+                if (!response.ok) {
+                    throw new Error(`Response status: ${response.status}`);
+                }
+
+                const data = await res.json();
+                console.log(data);
+                alert("Saved!");
+            } catch (error) {
+                console.error(error.message);
+            }
+        }
+    </script>
 </body>
+
 </html>
