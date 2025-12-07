@@ -57,6 +57,35 @@ def save_to_csv(note: Note):
         writer.writerow([note.pinyin, note.hanzi, note.english, note.malay])
 
 #  API Endpoint
+
+@app.get("/notes/json")
+def read_notes_json():
+    data_file = "notes.json"
+
+    if not os.path.exists(data_file):
+        return []
+    
+    with open(data_file, "r", encodings="utf-8") as f:
+        data = json.load(f)
+
+    return data
+
+@app.get("/notes/csv")
+def read_notes_csv():
+    data_file = "notes.csv"
+
+    if not os.path.exits(data_file):
+        return []
+    
+    results = []
+
+    with open(data_file, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            results.append(row)
+        
+        return results
+
 @app.post("/add-note")
 def add_note(note: Note):
     #  Save in both JSON and CSV
