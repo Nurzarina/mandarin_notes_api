@@ -65,7 +65,7 @@ def read_notes_json():
     if not os.path.exists(data_file):
         return []
     
-    with open(data_file, "r", encodings="utf-8") as f:
+    with open(data_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 
     return data
