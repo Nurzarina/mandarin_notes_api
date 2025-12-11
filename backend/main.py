@@ -48,7 +48,7 @@ def save_to_csv(note: Note):
 
     file_exists = os.path.exists(data_file)
 
-    with open(data_file, "a", encoding="utf-8", newline="") as f:
+    with open(data_file, "a", encoding="utf-8-sig", newline="") as f:
         writer = csv.writer(f)
 
         if not file_exists:

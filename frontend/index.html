@@ -22,10 +22,8 @@
 
         <section class="notes-display-section">
             <h2>See your current notes here:</h2>
-            <button onclick="getNote()">Get your notes</button>
-            <div class="notes-display-box">
-                <p id="json-notes"></p>
-            </div>
+            <button onclick="showNotes()">Get your notes</button>
+            <div id="notes-display-container"></div>
         </section>
     </div>
 
@@ -60,7 +58,7 @@
             }
         }
 
-        async function getNote() {
+        async function showNotes() {
             try {
                 const res = await fetch("http://127.0.0.1:8000/notes/json", {
                     method: "GET",
@@ -70,10 +68,22 @@
                     throw new Error(`Response status: ${response.status}`);
                 }
 
-                const data = await res.json();
+                const notes = await res.json();
 
-                displayNote = document.getElementById("json-notes");
-                displayNote.innerHTML = JSON.stringify(data, null, 2);
+                displayNoteContainer = document.getElementById("notes-display-container");
+                displayNoteContainer.innerHTML = notes.map(n => `
+                    <table class="note">
+                        <thead>
+                            <tr>
+                                <th><b>Pinyin:</b> ${n.pinyin}</th>
+                                <th><b>汉字:</b> ${n.hanzi}</th>
+                                <th><b>English:</b> ${n.english}</th>
+                                <th><b>Malay:</b> ${n.malay}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                    </table>
+                `).join("");
 
             } catch (error) {
                 console.error(error.message)
