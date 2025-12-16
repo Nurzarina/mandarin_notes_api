@@ -56,9 +56,7 @@ def save_to_csv(note: Note):
         
         writer.writerow([note.pinyin, note.hanzi, note.english, note.malay])
 
-#  API Endpoint
-
-@app.get("/notes/json")
+# JSON read function
 def read_notes_json():
     data_file = "notes.json"
 
@@ -66,26 +64,39 @@ def read_notes_json():
         return []
     
     with open(data_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
+        return json.load(f)
 
-    return data
-
-@app.get("/notes/csv")
+# CSV read function
 def read_notes_csv():
     data_file = "notes.csv"
 
     if not os.path.exits(data_file):
         return []
-    
+
     results = []
 
     with open(data_file, "r", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             results.append(row)
-        
+
         return results
 
+#  API Endpoint
+
+# GET endpoint for JSON file
+@app.get("/notes/json")
+def get_notes_json():
+    data = read_notes_json()
+    return data
+
+# GET endpoint for CSV file
+@app.get("/notes/csv")
+def get_notes_csv():
+    data = read_notes_csv()
+    return data
+
+# POST endpoint
 @app.post("/add-note")
 def add_note(note: Note):
     #  Save in both JSON and CSV
@@ -93,3 +104,44 @@ def add_note(note: Note):
     save_to_csv(note)
 
     return {"message" : "Note saved successfully!", "data": note}
+
+# PUT endpoint
+@app.put("/notes/{note_id}")
+def edit_note(note_id: int, updated_note: Note):
+    json_data = read_notes_json()
+    csv_data = read_notes_csv()
+    
+    if note_id < 0 or note_id >=len(json_data):
+        return {"error": "Note not found"}
+    
+    json_data[note_id] = updated_note.dict()
+    csv_data[note_id] = updated_note.dict()
+
+    save_to_json(json_data)
+    save_to_csv(csv_data)
+
+    return {
+        "message": "Notes updated successfully",
+        "id": note_id,
+        "data": updated_note
+    }
+
+#DELETE endpoint
+@app.delete("/notes/{note_id}")
+def delete_note(note_id: int):
+    json_data = get_notes_json()
+    csv_data = get_notes_csv();
+
+    if note_id < 0 or note_id >= len(json_data):
+        return {"error": "Note not found"}
+
+    json_deleted = json_data.pop(note_id)
+    csv_deleted = csv_data.pop(note_id)
+
+    get_notes_json(json_data)
+    get_notes_csv(csv_data)
+
+    return {
+        "message": "Note deleted successfully",
+        "deleted": json_deleted
+    }

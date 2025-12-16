@@ -32,14 +32,16 @@
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
 
-        async function saveNote() {
-            const note = {
-                pinyin: document.getElementById("pinyin").value,
-                hanzi: document.getElementById("hanzi").value,
-                english: document.getElementById("english").value,
-                malay: document.getElementById("malay").value
-            };
+        const note = {
+            pinyin: document.getElementById("pinyin").value,
+            hanzi: document.getElementById("hanzi").value,
+            english: document.getElementById("english").value,
+            malay: document.getElementById("malay").value
+        };
 
+        // Request to backend.
+
+        async function saveNote() {
             try {
                 const res = await fetch("http://127.0.0.1:8000/add-note", {
                     method: "POST",
@@ -90,6 +92,18 @@
                 displayNote.innerHTML = "There seems to be issue loading your notes. Please try again later.";
             }
         }
+
+        async function editNote(id, note) {
+            // How do I get the id? and how do I attach the 'note' in this?
+        }
+
+        async function deleteNote(id) {
+            // Why only put method here? No stringify or header?
+            await fetch(`http://127.0.0.1:8000/notes/{id}`, {
+                method: "DELETE"
+            });
+        }
+        
     </script>
 </body>
 
